@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="surveyor">
+    <xs:annotation>
+      <xs:documentation>#%L
+  SurveyorCore
+  %%
+  Copyright (C) 2013 - 2014 University of Oxford
+  %%
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  3. Neither the name of the University of Oxford nor the names of its contributors
+     may be used to endorse or promote products derived from this software without
+     specific prior written permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+  OF THE POSSIBILITY OF SUCH DAMAGE.
+  #L%</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="datasource">
+          <xs:annotation>
+            <xs:documentation>A sample data source, default might be the standard JSON data source</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="property">
+                <xs:annotation>
+                  <xs:documentation>type one of LocalClientSideDataProvider|ClientSideSearchDataProvider|ServerSideLuceneDataProvider</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute type="xs:string" name="name"/>
+                      <xs:attribute type="xs:string" name="value"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="schema">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="field" maxOccurs="unbounded" minOccurs="0">
+                      <xs:annotation>
+                        <xs:documentation>type would be controlled vocabulary containing: Coordinate, Date, String, Integer</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute type="xs:string" name="name" use="optional"/>
+                            <xs:attribute type="xs:string" name="type" use="optional"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="type"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="views">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="map">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="filter">
+                      <xs:annotation>
+                        <xs:documentation>alternative type may be tabular data  Assuming the range is a enumerated list of places, like World, Asia, Africa, Europe etc</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="field">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="name"/>
+                                  <xs:attribute type="xs:string" name="value"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="marker">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="lonField">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="fieldName"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="latField">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="fieldName"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="InfoWindowTemplate">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="splitLayout">
+                                  <xs:annotation>
+                                    <xs:documentation><![CDATA[<dataView><filter field="CLON" value="{marker.CLON}"/><filter field="CLAT" value="{marker.CLAT}"/><filter field="PID" value="{marker.PID}"/><getRecordsRestrictedBy currentMarkerContextFields="CLON, CLAT, PID"/></dataView><simpleLayout><plot geom="pie" x="PY" y="CN" xLabel="x axis" yLabel="y axis" mainTitle="Pie chart example" subTitle="Chart sub title"/>The bar chart shows the the decline in drug effectiveness as time increases</simpleLayout>]]></xs:documentation>
+                                  </xs:annotation>
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="left">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="plot">
+                                              <xs:annotation>
+                                                <xs:documentation>plot is inspired by qplot from ggplot2
+                             Attributes
+                             geom: Short for geometry, supports bar, jitter, line, boxplot
+                             data: in this context data fetches all related records by matching to current context record on number of field properties, effectively calling getRelatedRecordsByFields(). Default behaviour for data attribute when absent is to get all records.
+                             TODO:
+                             * Data transformations may be helpful, such as sorting
+                             * Support faceting to break up the data into subsets and allow user to select a subset
+                             * Stats support to summarise the data into useful ways, binning and counting observations for histograms
+                             * Supporting layer based composition like ggplot2 does!! Would require using a more low level drawing api and migrating ggplot logic to js..</xs:documentation>
+                                              </xs:annotation>
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="geom"/>
+                                                    <xs:attribute type="xs:string" name="x"/>
+                                                    <xs:attribute type="xs:string" name="y"/>
+                                                    <xs:attribute type="xs:string" name="xLabel"/>
+                                                    <xs:attribute type="xs:string" name="yLabel"/>
+                                                    <xs:attribute type="xs:string" name="mainTitle"/>
+                                                    <xs:attribute type="xs:string" name="subTitle"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="right">
+                                        <xs:complexType mixed="true">
+                                          <xs:sequence>
+                                            <xs:element name="plot">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="geom"/>
+                                                    <xs:attribute type="xs:string" name="x"/>
+                                                    <xs:attribute type="xs:string" name="y"/>
+                                                    <xs:attribute type="xs:string" name="xLabel"/>
+                                                    <xs:attribute type="xs:string" name="yLabel"/>
+                                                    <xs:attribute type="xs:string" name="mainTitle"/>
+                                                    <xs:attribute type="xs:string" name="subTitle"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute type="xs:string" name="dataSourceRestrictedByCurrentMarkerContextFields"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:string" name="label"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="name"/>
+                  <xs:attribute type="xs:string" name="maxZoomOutLevel"/>
+                  <xs:attribute type="xs:string" name="range"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="table">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="columns">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="column" maxOccurs="unbounded" minOccurs="0">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="fieldName" use="optional"/>
+                                  <xs:attribute type="xs:string" name="fieldTitle" use="optional"/>
+                                  <xs:attribute type="xs:string" name="hyperlinkField" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:string" name="label"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="name"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="viewTemplate">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="splitLayout">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="left">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="plot">
+                                  <xs:annotation>
+                                    <xs:documentation>plot is inspired by qplot from ggplot2
+                     Attributes
+                     geom: Short for geometry, supports bar, jitter, line, boxplot
+                     data: in this context data fetches all related records by matching to current context record on number of field properties, effectively calling getRelatedRecordsByFields(). Default behaviour for data attribute when absent is to get all records.
+                     TODO:
+                     * Data transformations may be helpful, such as sorting
+                     * Support faceting to break up the data into subsets and allow user to select a subset
+                     * Stats support to summarise the data into useful ways, binning and counting observations for histograms
+                     * Supporting layer based composition like ggplot2 does!! Would require using a more low level drawing api and migrating ggplot logic to js..</xs:documentation>
+                                  </xs:annotation>
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute type="xs:string" name="geom"/>
+                                        <xs:attribute type="xs:string" name="x"/>
+                                        <xs:attribute type="xs:string" name="y"/>
+                                        <xs:attribute type="xs:string" name="xLabel"/>
+                                        <xs:attribute type="xs:string" name="yLabel"/>
+                                        <xs:attribute type="xs:string" name="mainTitle"/>
+                                        <xs:attribute type="xs:string" name="subTitle"/>
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="right">
+                            <xs:complexType mixed="true">
+                              <xs:sequence>
+                                <xs:element name="plot">
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute type="xs:string" name="geom"/>
+                                        <xs:attribute type="xs:string" name="x"/>
+                                        <xs:attribute type="xs:string" name="y"/>
+                                        <xs:attribute type="xs:string" name="xLabel"/>
+                                        <xs:attribute type="xs:string" name="yLabel"/>
+                                        <xs:attribute type="xs:string" name="mainTitle"/>
+                                        <xs:attribute type="xs:string" name="subTitle"/>
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:string" name="label">
+                      <xs:annotation>
+                        <xs:documentation>&lt;simpleLayout>&lt;plot geom="pie" x="PY" y="CN" xLabel="x axis" yLabel="y axis" mainTitle="Pie chart example" subTitle="Chart sub title"/>The bar chart shows the the decline in drug effectiveness as time increases&lt;/simpleLayout></xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="name"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="filters">
+          <xs:complexType mixed="true">
+            <xs:sequence>
+              <xs:element type="xs:string" name="label"/>
+              <xs:element name="filter" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="label">
+                      <xs:annotation>
+                        <xs:documentation>We can infers how to display the filter, based on the of the field,
+            or we could have an additional tag to describe this. So for a string field assumed that multiselect field is used</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="
+                Allows the user to select the medicines, based on International Nonproprietary Names (INN)
+                or categories of medicines. Medicines are classified in three categories Artemisinin derivatives
+                (including all the artemisinin derivative monotherapies), Artemisinin based Combination Therapies (ACTs)
+                and Non-artemisinins. These categories are mutually exclusive and individual drugs or combinations are
+                listed below. The selection of all publications that contain information on each individual medicine or
+                medicine categories can be obtained by filtering.
+            "/>
+                          <xs:enumeration value="
+                Lists the different types of publication found describing antimalarial drug quality.
+                Papers on techniques, drug legislation, reviews, and other reports usually
+                do not contain location information and therefore will not appear in the map.
+                They can however be found in the report table.
+            "/>
+                          <xs:enumeration value="
+                Lists the type of sampling methodology used in each report.
+                Only studies with evidence describing how randomisation was performed have been included as 'Random Survey'
+            "/>
+                          <xs:enumeration value="
+                We use, unless otherwise specified in the report, the term 'falsified' as a synonym for
+                counterfeit or spurious, referring to a medical
+                product produced with criminal intent to mislead, without reference to intellectual
+                property concerns. If authors did not examine packaging
+                we class samples that failed chemical assays, but without detected
+                wrong active ingredients, as poor quality and not falsified/counterfeit.
+                Samples that did not fail chemical assays and/or a packaging tests are considered as good quality.
+                Samples are only classified as 'Good Quality' if all samples collected were good quality.
+                Samples classified as poor quality, falsified or substandard may contain good quality medicines.
+            "/>
+                          <xs:enumeration value="
+                Lists the type of outlet where the collection of samples was
+                performed. Reports that do not provide clear information about the drug provider
+                will be classified as unknown.
+            "/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="filterValueLabelMap">
+                      <xs:complexType mixed="true">
+                        <xs:sequence>
+                          <xs:element name="filterLabel" maxOccurs="unbounded" minOccurs="0">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="fieldValue" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="field" use="optional"/>
+                  <xs:attribute type="xs:string" name="name" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="filterByDateRange">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="label"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="field"/>
+                  <xs:attribute type="xs:string" name="name"/>
+                  <xs:attribute type="xs:string" name="startDate"/>
+                  <xs:attribute type="xs:string" name="endDate"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

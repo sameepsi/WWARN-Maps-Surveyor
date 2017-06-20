@@ -77,8 +77,8 @@
                     <!--<getRecordsRestrictedBy currentMarkerContextFields="CLON, CLAT, PID"/>-->
                     <!--</dataView>-->
                     <!--<simpleLayout>-->
-                        <!--<plot geom="pie" x="PY" y="CN" xLabel="x axis" yLabel="y axis" mainTitle="Pie chart example" subTitle="Chart sub title"/>-->
-                        <!--The bar chart shows the the decline in drug effectiveness as time increases-->
+                    <!--<plot geom="pie" x="PY" y="CN" xLabel="x axis" yLabel="y axis" mainTitle="Pie chart example" subTitle="Chart sub title"/>-->
+                    <!--The bar chart shows the the decline in drug effectiveness as time increases-->
                     <!--</simpleLayout>-->
 
                     <splitLayout>
